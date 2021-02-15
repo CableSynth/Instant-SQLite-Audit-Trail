@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -147,14 +147,14 @@ if __name__ == '__main__':
     script_name = sys.argv[0]
 
     if len(sys.argv) != 3:
-        print usage(script_name)
+        print(usage(script_name))
         exit(1)
 
     command, db = sys.argv[1:]
 
     if not os.path.isfile(db):
         #race condition ignored
-        print "warning: creating %s" % db
+        print("warning: creating %s" % db)
 
     with sqlite3.connect(db) as conn:
         if command == 'attach':
@@ -162,6 +162,6 @@ if __name__ == '__main__':
         elif command == 'detach':
             detach_log(conn)
         else:
-            print 'invalid command; use attach or detach'
-            print
-            print usage(script_name)
+            print('invalid command; use attach or detach')
+            print()
+            print(usage(script_name))

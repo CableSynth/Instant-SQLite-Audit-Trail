@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sqlite3
 import unittest
@@ -61,8 +61,8 @@ class TestAudit(unittest.TestCase):
         #no previous, new is what we inserted
         self.assertEqual(r[3:],
                          (None,
-                          unicode(repr([['c1', 'audit'],
-                                        ['c2', 'this']])),
+                          str([['c1', 'audit'],
+                                        ['c2', 'this']]),
                          ))
 
     def test_update(self):
@@ -79,10 +79,10 @@ class TestAudit(unittest.TestCase):
 
         self.assertEqual(r[1:3], (u'tab', u'UPDATE'))
         self.assertEqual(r[3:],
-                         (unicode(repr([['c1', 'audit'],
-                                        ['c2', 'this']])),
-                          unicode(repr([['c1', 'audit'],
-                                        ['c2', 'everything']])),
+                         (str([['c1', 'audit'],
+                                        ['c2', 'this']]),
+                          str([['c1', 'audit'],
+                                        ['c2', 'everything']]),
                          ))
 
     def test_delete(self):
@@ -98,8 +98,8 @@ class TestAudit(unittest.TestCase):
 
         self.assertEqual(r[1:3], (u'tab', u'DELETE'))
         self.assertEqual(r[3:],
-                         (unicode(repr([['c1', 'audit'],
-                                        ['c2', 'this']])),
+                         (str([['c1', 'audit'],
+                                        ['c2', 'this']]),
                           None,
                          ))
 
@@ -117,10 +117,10 @@ class TestAudit(unittest.TestCase):
 
         self.assertEqual(r[1:3], (u'tab', u'UPDATE'))
         self.assertEqual(r[3:],
-                         (unicode(repr([['c1', 'audit'],
-                                        ['c2', None]])),
-                          unicode(repr([['c1', 'audit'],
-                                        ['c2', 'everything']])),
+                         (str([['c1', 'audit'],
+                                        ['c2', None]]),
+                          str([['c1', 'audit'],
+                                        ['c2', 'everything']]),
                          ))
 
     def test_detach(self):
