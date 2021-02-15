@@ -40,7 +40,7 @@ def detach_log(conn,
 
 def get_nonaudit_tables(conn, audit_table='_audit'):
     tables = [info[1] for info in
-              conn.execute("SELECT * FROM sqlite_master WHERE type='table'")]
+              conn.execute("SELECT * FROM sqlite_master WHERE type='table' AND NOT (rootpage IS NULL OR rootpage == 0)")]
     return [t for t in tables
             if t != audit_table and not t.startswith('sqlite_')]
 
