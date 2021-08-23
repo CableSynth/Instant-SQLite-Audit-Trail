@@ -14,6 +14,7 @@ def attach_log(conn,
 
     detach_log(conn)
 
+    # I want to check for a table here.
     conn.executescript(
         "CREATE TABLE {audit_table}"
         " (time TEXT, tbl TEXT, op TEXT, old TEXT, new TEXT);".format(
@@ -23,6 +24,7 @@ def attach_log(conn,
     for table in get_nonaudit_tables(conn, audit_table):
         col_names = get_columns(conn, table)
         for op in ops:
+            conn.execute(f"DROP TRIGGER IF EXISTS {trigger_name(table, op)};")
             conn.execute(trigger_text(table, op, col_names))
 
 
@@ -129,7 +131,7 @@ def trigger_text(table, op, col_names, audit_table='_audit', name=None):
 
     when = 'BEFORE' if op == 'DELETE' else 'AFTER'
 
-    return "DROP TRIGGER IF EXISTS {name}; CREATE TRIGGER {name} {when} {op} ON {table} " \
+    return "CREATE TRIGGER {name} {when} {op} ON {table} " \
             "BEGIN {audit_update} END;".format(
                 name=name,
                 when=when,
