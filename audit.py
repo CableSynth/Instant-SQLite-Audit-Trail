@@ -129,7 +129,7 @@ def trigger_text(table, op, col_names, audit_table='_audit', name=None):
 
     when = 'BEFORE' if op == 'DELETE' else 'AFTER'
 
-    return "CREATE TRIGGER {name} {when} {op} ON {table} " \
+    return "DROP TRIGGER IF EXISTS {name}; CREATE TRIGGER {name} {when} {op} ON {table} " \
             "BEGIN {audit_update} END;".format(
                 name=name,
                 when=when,
