@@ -3,8 +3,9 @@
 import os
 import sys
 import sqlite3
+import argparse
 #all _conn_ references are an sqlite3.Connection
-
+rebuild = True
 
 def attach_log(conn,
                audit_table='_audit',
@@ -12,14 +13,16 @@ def attach_log(conn,
     """Create a log on this connection. If a log already exists, it is
     cleared."""
 
-    detach_log(conn)
-
     # I want to check for a table here.
-    conn.executescript(
-        "CREATE TABLE {audit_table}"
-        " (time TEXT, tbl TEXT, op TEXT, old TEXT, new TEXT);".format(
-            audit_table=audit_table)
-    )
+    if rebuild:
+
+        detach_log(conn)
+
+        conn.executescript(
+            "CREATE TABLE {audit_table}"
+            " (time TEXT, tbl TEXT, op TEXT, old TEXT, new TEXT);".format(
+                audit_table=audit_table)
+        )
 
     for table in get_nonaudit_tables(conn, audit_table):
         col_names = get_columns(conn, table)
@@ -141,19 +144,17 @@ def trigger_text(table, op, col_names, audit_table='_audit', name=None):
             )
 
 
-def usage(script_name):
-    return "usage: %s attach|detach DBFILE" % script_name
-
-
 if __name__ == '__main__':
-    script_name = sys.argv[0]
-
-    if len(sys.argv) != 3:
-        print(usage(script_name))
-        exit(1)
-
-    command, db = sys.argv[1:]
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', choices=['attach', 'detach'], help='the command to run')
+    parser.add_argument('db', type=str, help='db file')
+    parser.add_argument('--rebuild', dest='rebuild',
+        action='store_const', const=True, default=False, help='rebuild the audit table')
+    args = parser.parse_args()
+    command = args.command
+    db = args.db
+    rebuild = args.rebuild
+    print(rebuild)
     if not os.path.isfile(db):
         #race condition ignored
         print("warning: creating %s" % db)
@@ -161,9 +162,5 @@ if __name__ == '__main__':
     with sqlite3.connect(db) as conn:
         if command == 'attach':
             attach_log(conn)
-        elif command == 'detach':
-            detach_log(conn)
         else:
-            print('invalid command; use attach or detach')
-            print()
-            print(usage(script_name))
+            detach_log(conn)
