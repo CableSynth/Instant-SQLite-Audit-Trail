@@ -20,7 +20,7 @@ def attach_log(conn,
 
         conn.executescript(
             "CREATE TABLE {audit_table}"
-            " (time TEXT, tbl TEXT, op TEXT, old TEXT, new TEXT);".format(
+            " (time TEXT, tbl TEXT, op TEXT, old_text TEXT, new_text TEXT, old_integer INTEGER, new_integer INTEGER, old_real REAL, new_real REAL, old_blob BLOB, new_blob BLOB);".format(
                 audit_table=audit_table)
         )
 
