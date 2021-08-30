@@ -25,7 +25,8 @@ def attach_log(conn,
         )
 
     for table in get_nonaudit_tables(conn, audit_table):
-        col_names = get_columns(conn, table)
+        table_info = get_columns(conn, table)
+        col_names = [col[0] for col in table_info]
         for op in ops:
             conn.execute(f"DROP TRIGGER IF EXISTS {trigger_name(table, op)};")
             conn.execute(trigger_text(table, op, col_names))
@@ -51,7 +52,7 @@ def get_nonaudit_tables(conn, audit_table='_audit'):
 
 
 def get_columns(conn, table):
-    return [info[1] for info in
+    return [info[1:2] for info in
             conn.execute("PRAGMA table_info(%s)" % table)]
 
 
