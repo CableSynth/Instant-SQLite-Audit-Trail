@@ -20,13 +20,15 @@ def attach_log(conn,
 
         conn.executescript(
             "CREATE TABLE {audit_table}"
-            " (time TEXT, tbl TEXT, op TEXT, old_text TEXT, new_text TEXT, old_integer INTEGER, new_integer INTEGER, old_real REAL, new_real REAL, old_blob BLOB, new_blob BLOB);".format(
+            " (time TEXT, tbl TEXT, col TEXT, op TEXT, old_text TEXT, new_text TEXT,"
+            " old_integer INTEGER, new_integer INTEGER, old_real REAL, new_real REAL, old_blob BLOB, new_blob BLOB);".format(
                 audit_table=audit_table)
         )
 
     for table in get_nonaudit_tables(conn, audit_table):
         table_info = get_columns(conn, table)
         col_names = [col[0] for col in table_info]
+
         for op in ops:
             conn.execute(f"DROP TRIGGER IF EXISTS {trigger_name(table, op)};")
             conn.execute(trigger_text(table, op, col_names))
