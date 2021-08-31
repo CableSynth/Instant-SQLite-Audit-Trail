@@ -52,8 +52,8 @@ def get_nonaudit_tables(conn, audit_table='_audit'):
 
 
 def get_columns(conn, table):
-    return [info[1:2] for info in
-            conn.execute("PRAGMA table_info(%s)" % table)]
+    table_info = conn.execute("PRAGMA table_info(%s)" % table)
+    return [info[1:3] for info in table_info]
 
 
 def trigger_name(table, op):
